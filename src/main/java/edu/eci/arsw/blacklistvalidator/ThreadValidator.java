@@ -39,7 +39,7 @@ public class ThreadValidator extends Thread{
             checkedListsCount++;
             if (skds.isInBlackListServer(i, ipaddress)){
                 
-                
+                blackListOcurrences.add(i);
             
                 ocurrencesCount++;
             }

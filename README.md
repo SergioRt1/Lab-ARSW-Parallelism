@@ -1,6 +1,6 @@
-<<<<<<< 5d823f5b7d6d9ba53ed6eb7db989684817605493
+
 # LabARSW_ECI_Parallelism
-=======
+
 ## Escuela Colombiana de Ingeniería
 ### Arquitecturas de Software
 ### Introducción al paralelismo - hilos
