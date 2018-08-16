@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -37,19 +38,19 @@ public class HostBlackListsValidator {
         
         ArrayList<ThreadValidator> threads = new ArrayList<ThreadValidator>(); 
         
-        int ocurrencesCount=0;
+        AtomicInteger ocurrencesCount = new AtomicInteger(0);;
         
         int totalServer;
-        
+
         HostBlacklistsDataSourceFacade skds=HostBlacklistsDataSourceFacade.getInstance();
         
         int checkedListsCount=0;
 
         totalServer = skds.getRegisteredServersCount()+skds.getRegisteredServersCount()%N;
         for(int j = 0; j < N-1; j++){
-            threads.add(new ThreadValidator(totalServer/N*j, totalServer/N*(j+1),ipaddress));
+            threads.add(new ThreadValidator(totalServer/N*j, totalServer/N*(j+1),ipaddress,ocurrencesCount));
         }
-        threads.add(new ThreadValidator(totalServer/N*(N-1), skds.getRegisteredServersCount(),ipaddress));
+        threads.add(new ThreadValidator(totalServer/N*(N-1), skds.getRegisteredServersCount(),ipaddress,ocurrencesCount));
         
         for(ThreadValidator t: threads){
             t.start();
@@ -64,10 +65,9 @@ public class HostBlackListsValidator {
         }
         for(ThreadValidator t: threads){
             checkedListsCount += t.getCheckedListsCount();
-            ocurrencesCount += t.getOcurrences();
             blackListOcurrences.addAll(t.getBlackListOcurrences());
         }
-        if (ocurrencesCount>=BLACK_LIST_ALARM_COUNT){
+        if (ocurrencesCount.get()>=BLACK_LIST_ALARM_COUNT){
             skds.reportAsNotTrustworthy(ipaddress);
         }
         else{
